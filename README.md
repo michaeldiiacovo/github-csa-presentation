@@ -15,7 +15,7 @@ Built as a single-file HTML presentation with scroll-snap navigation, animated d
 
 ## View
 
-**[Live presentation →](https://diiacovo.github.io/github-csa-presentation/)**
+**[Live presentation →](https://michaeldiiacovo.github.io/github-csa-presentation/)**
 
 ## Tech
 
