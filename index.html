@@ -53,17 +53,6 @@
     .nav-dot{width:8px;height:8px;border-radius:50%;background:#30363d;cursor:pointer;transition:all .3s ease}
     .nav-dot.active{background:#58a6ff;box-shadow:0 0 8px rgba(88,166,255,.5);transform:scale(1.3)}
     .nav-dot:hover{background:#58a6ff}
-    #practice-panel{position:fixed;bottom:0;left:0;right:0;background:#161b22;border-top:1px solid #30363d;max-height:0;overflow-y:auto;z-index:200;transition:max-height .4s ease}
-    #practice-panel.open{max-height:200px}
-    #practice-panel .inner{padding:16px 40px}
-    #practice-panel h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#58a6ff;margin-bottom:8px;font-weight:600}
-    #practice-panel p{font-size:13px;color:#8b949e;line-height:1.7}
-    .key-phrase{color:#3fb950;font-weight:600}
-    #practice-toggle{position:fixed;bottom:16px;right:60px;z-index:201;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:6px 14px;color:#8b949e;font-size:11px;cursor:pointer;font-family:inherit;transition:all .2s ease}
-    #practice-toggle:hover{border-color:#58a6ff;color:#58a6ff}
-    #practice-toggle.active{background:#58a6ff;color:#0d1117;border-color:#58a6ff}
-    #key-hint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:50;font-size:10px;color:#484f58;transition:opacity 2s ease 5s}
-    #key-hint.faded{opacity:0}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
     .cursor-blink::after{content:'|';color:#d29922;animation:blink .8s step-end infinite;margin-left:2px}
     #scroll-content::-webkit-scrollbar{width:0}
@@ -210,19 +199,16 @@
        <p class="text-xs mt-3" style="color:#6e7681;">That's the conversation I'd be having with every customer in this role.</p>
       </div>
      </div>
-     <div class="slide-footer"><span>Michael Di Iacovo · Senior Customer Success Architect</span><span>4 / 4</span></div>
+     <div class="slide-footer"><span>Michael Di Iacovo</span><span>4 / 4</span></div>
     </section>
 
    </div>
   </div>
 
-  <button id="practice-toggle" onclick="togglePractice()">P — Practice mode</button>
-  <div id="practice-panel"><div class="inner"><h4>Speaker notes — Slide <span id="practice-slide">1</span></h4><p id="practice-notes"></p></div></div>
-  <div id="key-hint">↑↓ arrows to navigate · click cards to expand · P for practice mode</div>
 
   <script>
     const scrollContainer=document.getElementById('scroll-content'),progressBar=document.getElementById('progress-bar'),sections=document.querySelectorAll('.section'),navDots=document.querySelectorAll('.nav-dot'),sectionCount=sections.length,colors=['#58a6ff','#3fb950','#bc8cff','#d29922'];
-    let practiceOpen=false,currentSection=0,quoteTyped=false;
+    let currentSection=0,quoteTyped=false;
     const closingQuote='\u201CThe organizations that get the most from AI aren\u2019t the ones that adopt fastest \u2014 they\u2019re the ones that adopt most intentionally.\u201D';
 
     const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');e.target.querySelectorAll('.counter:not(.counted)').forEach(c=>animateCounter(c))}})},{threshold:.15,root:scrollContainer});
@@ -237,9 +223,7 @@
       currentSection=Math.min(Math.round(st/sH),sectionCount-1);
       progressBar.style.background=colors[currentSection];
       navDots.forEach((d,i)=>{d.classList.toggle('active',i===currentSection);d.classList.toggle('pulse-dot',i===currentSection)});
-      if(practiceOpen)updatePracticeNotes();
       if(currentSection===3&&!quoteTyped)typeQuote();
-      document.getElementById('key-hint').classList.add('faded');
     });
 
     navDots.forEach(d=>d.addEventListener('click',()=>{const i=parseInt(d.dataset.section);scrollContainer.scrollTo({top:i*(scrollContainer.scrollHeight/sectionCount),behavior:'smooth'})}));
@@ -248,18 +232,9 @@
       const sH=scrollContainer.scrollHeight/sectionCount;
       if(e.key==='ArrowDown'||e.key==='ArrowRight'||e.key===' '){e.preventDefault();scrollContainer.scrollTo({top:Math.min(currentSection+1,sectionCount-1)*sH,behavior:'smooth'})}
       else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();scrollContainer.scrollTo({top:Math.max(currentSection-1,0)*sH,behavior:'smooth'})}
-      else if(e.key==='p'||e.key==='P')togglePractice();
     });
 
     function toggleCard(c){c.classList.toggle('expanded')}
-
-    function togglePractice(){practiceOpen=!practiceOpen;document.getElementById('practice-panel').classList.toggle('open',practiceOpen);document.getElementById('practice-toggle').classList.toggle('active',practiceOpen);if(practiceOpen)updatePracticeNotes()}
-    function updatePracticeNotes(){
-      const n=sections[currentSection]?.dataset.notes||'';
-      document.getElementById('practice-slide').textContent=currentSection+1;
-      const f=n.replace(/\|/g,'<br><br>').replace(/(OPEN|TRANSITION|FRAME|LAYER \d|PATTERN|BRIDGE|FEDERAL|STARTUP|CLOSE SLIDE|TRUST|GOVERNANCE|ROI|CLOSE|WALK STATS|BONUS IF ASKED):/g,'<span class="key-phrase">$1:</span>');
-      document.getElementById('practice-notes').innerHTML=f;
-    }
 
     function typeQuote(){quoteTyped=true;const el=document.getElementById('quote-text');el.classList.add('cursor-blink');let i=0;function t(){if(i<closingQuote.length){el.textContent=closingQuote.substring(0,i+1);i++;setTimeout(t,22)}else setTimeout(()=>el.classList.remove('cursor-blink'),1500)}t()}
 
